@@ -3,7 +3,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { readTodo, writeTodo } from "./src/todo.controller.js";
 import { v4 as uuidv4 } from "uuid";
+import { fileURLToPath } from "url";
 import path from "path";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
