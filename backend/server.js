@@ -50,6 +50,6 @@ app.post("/todos", async (req, res) => {
 
   res.status(201).json(newTodo);
 });
-app.listen(Port, () => {
+app.listen(Port, "0.0.0.0", () => {
   console.log("Server running on port", Port);
 });
