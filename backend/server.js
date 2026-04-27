@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { readTodo, writeTodo } from "./src/todo.controller.js";
 import { v4 as uuidv4 } from "uuid";
+import path from "path";
 
 dotenv.config();
 
@@ -12,6 +13,13 @@ const Port = 5000;
 
 app.use(cors());
 app.use(express.json());
+
+//server React build
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+});
 
 app.get("/health", (req, res) => {
   res.status(200).json({ message: "Server Healthy" });
