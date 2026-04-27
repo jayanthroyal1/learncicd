@@ -19,22 +19,16 @@ app.use(express.json());
 
 const distPath = path.join(__dirname, "../frontend/dist");
 
-app.use(express.static(distPath));
-
-app.use((req, res) => {
-  res.sendFile(path.join(distPath, "index.html"));
-});
-
-app.get("/health", (req, res) => {
+app.get("/api/health", (req, res) => {
   res.status(200).json({ message: "Server Healthy" });
 });
 
-app.get("/todos", async (req, res) => {
+app.get("/api/todos", async (req, res) => {
   const todos = await readTodo();
   res.status(200).json(todos);
 });
 
-app.post("/todos", async (req, res) => {
+app.post("/api/todos", async (req, res) => {
   const { title } = req.body;
 
   if (!title) return res.status(400).json({ message: "Title is required" });
@@ -54,6 +48,13 @@ app.post("/todos", async (req, res) => {
 
   res.status(201).json(newTodo);
 });
+
+app.use(express.static(distPath));
+
+app.use((req, res) => {
+  res.sendFile(path.join(distPath, "index.html"));
+});
+
 app.listen(Port, "0.0.0.0", () => {
   console.log("Server running on port", Port);
 });
