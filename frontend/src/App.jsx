@@ -56,7 +56,7 @@ const App = () => {
   };
   return (
     <div style={{ padding: "20px" }}>
-      <h1>TODO App</h1>
+      <h1>TODO APP</h1>
 
       <input
         value={title}
