@@ -61,13 +61,13 @@ const App = () => {
       <input
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        placeholder="Enter todo..."
+        placeholder="Enter todo here..."
       />
       <button onClick={addTodo}>Add Todo</button>
 
       <ul>
         {todos.map((todo) => (
-          <li key={todo.id}>
+          <li key={todo.id} style={{ listStyle: "none" }}>
             <span
               onClick={() => toggleTodo(todo)}
               style={{

@@ -21,10 +21,16 @@ jobs:
             - name: Deploy to EC2
               run: |+
                   ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-                  cd project
+                  set -e
+
+                  cd project/learncicd
+
+                  echo "Checking deployed commit...."
+                  git log -1
 
                   echo "pulling latest code...."
                   git pull origin main
+                  git reset --hard origin/main
 
                   echo 'Installing backend dependencies...'
                   cd backend
@@ -35,16 +41,13 @@ jobs:
                   npm ci
                   npm run build
 
-                  echo "Checking deployed commit...."
-                  git log -1
-
                   echo "Checking build files..."
                   ls -lt frontend/build | head
 
                   echo "Restarting app..."
-                  pm2 restart backend
+                  ~/.npm-global/bin/pm2 restart backend || pm2 restart backend
 
-                  echo "Deployment Completed..."
+                  echo "Deployment Completed...!"
                   EOF
 
                      
