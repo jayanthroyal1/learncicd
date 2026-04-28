@@ -63,7 +63,7 @@ const App = () => {
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Enter todo..."
       />
-      <button onClick={addTodo}>Add</button>
+      <button onClick={addTodo}>Add Todo</button>
 
       <ul>
         {todos.map((todo) => (
