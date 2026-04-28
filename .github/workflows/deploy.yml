@@ -42,7 +42,12 @@ jobs:
                   npm run build
 
                   echo "Checking build files..."
-                  ls -lt frontend/build | head
+                  ls -lt frontend/dist | head
+
+                  echo "Loading Node via NVM..."
+                  export NVM_DIR="$HOME/.nvm"
+                  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+                  nvm use 20
 
                   echo "Restarting app..."
                   ~/.npm-global/bin/pm2 restart backend || pm2 restart backend
