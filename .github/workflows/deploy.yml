@@ -35,6 +35,12 @@ jobs:
                   npm ci
                   npm run build
 
+                  echo "Checking deployed commit...."
+                  git log -1
+
+                  echo "Checking build files..."
+                  ls -lt frontend/build | head
+
                   echo "Restarting app..."
                   pm2 restart backend
 
