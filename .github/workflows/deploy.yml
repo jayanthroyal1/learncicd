@@ -50,6 +50,9 @@ jobs:
                   echo "Checking build files..."
                   ls -lt dist | head
 
+                  echo "Switching back to backend..."
+                  cd ../backend
+
                   echo "Ensuring PM2 is installed..."
                   command -v pm2 || npm install -g pm2
 
