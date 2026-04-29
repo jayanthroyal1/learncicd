@@ -3,13 +3,13 @@ version: "3"
 services:
   backend:
     build: ./backend
-    container_name: backend_cicd
+    container_name: backend
     ports:
        - "5000:5000"
     
   frontend:
     build: ./frontend
-    container_name: frontend_cicd
+    container_name: frontend
     ports:
       - "80:80"
     depends_on:
