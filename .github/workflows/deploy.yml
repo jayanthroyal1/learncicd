@@ -23,14 +23,20 @@ jobs:
                   ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
                   set -e
 
+                  echo "Moving to project directory..."
                   cd project/learncicd
 
-                  echo "Checking deployed commit...."
+                  echo "Current commit before update...."
                   git log -1
 
                   echo "pulling latest code...."
-                  git pull origin main
+                  git fetch origin main
                   git reset --hard origin/main
+
+                  echo "Loading Node via NVM..."
+                  export NVM_DIR="$HOME/.nvm"
+                  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+                  nvm use 20 || echo "Node 20 not found"
 
                   echo 'Installing backend dependencies...'
                   cd backend
@@ -42,15 +48,16 @@ jobs:
                   npm run build
 
                   echo "Checking build files..."
-                  ls -lt frontend/dist | head
+                  ls -lt dist | head
 
-                  echo "Loading Node via NVM..."
-                  export NVM_DIR="$HOME/.nvm"
-                  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-                  nvm use 20
+                  echo "Ensuring PM2 is installed..."
+                  command -v pm2 || npm install -g pm2
 
                   echo "Restarting app..."
-                  ~/.npm-global/bin/pm2 restart backend || pm2 restart backend
+                  pm2 delete backend || true
+                  pm2 start server.js -i max --name backend
+                  pm2 save
+                  pm2 reload backend
 
                   echo "Deployment Completed...!"
                   EOF
