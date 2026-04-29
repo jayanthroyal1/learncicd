@@ -18,7 +18,7 @@ jobs:
                   chmod 600 ~/.ssh/id_rsa
                   ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-            - name: Deploy to EC2
+            - name: Deploy to EC2 (Docker Compose)
               run: |+
                   ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
                   set -e
@@ -33,36 +33,50 @@ jobs:
                   git fetch origin main
                   git reset --hard origin/main
 
-                  echo "Loading Node via NVM..."
-                  export NVM_DIR="$HOME/.nvm"
-                  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-                  nvm use 20 || echo "Node 20 not found"
+                  echo "Stopping old Docker Containers"
+                  docker compose down || true
 
-                  echo 'Installing backend dependencies...'
-                  cd backend
-                  npm ci
+                  echo "Building & Starting Docker Containers..."
+                  docker compose up -d --build
 
-                  echo "Building Frontend..."
-                  cd ../frontend
-                  npm ci
-                  npm run build
-
-                  echo "Checking build files..."
-                  ls -lt dist | head
-
-                  echo "Switching back to backend..."
-                  cd ../backend
-
-                  echo "Ensuring PM2 is installed..."
-                  command -v pm2 || npm install -g pm2
-
-                  echo "Restarting app..."
-                  pm2 delete backend || true
-                  pm2 start server.js -i max --name backend
-                  pm2 save
-                  pm2 reload backend
+                  echo "Running Containers..."
+                  docker ps
 
                   echo "Deployment Completed...!"
                   EOF
 
-                     
+              #   echo "Loading Node via NVM..."
+              #   export NVM_DIR="$HOME/.nvm"
+              #   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+              #   nvm use 20 || echo "Node 20 not found"
+
+              #   echo 'Installing backend dependencies...'
+              #   cd backend
+              #   npm ci
+
+              #   echo "Building Frontend..."
+              #   cd ../frontend
+              #   npm ci
+              #   npm run build
+
+              #   echo "Checking build files..."
+              #   ls -lt dist | head
+
+              #   echo "Switching back to backend..."
+              #   cd ../backend
+
+              #   echo "Ensuring PM2 is installed..."
+              #   command -v pm2 || npm install -g pm2
+
+              #   echo "Restarting app..."
+              #   pm2 delete backend || true
+              #   pm2 start server.js -i max --name backend
+              #   pm2 save
+              #   pm2 reload backend
+
+              #   echo "Deployment Completed...!"
+              #   EOF
+
+
+
+
