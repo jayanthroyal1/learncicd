@@ -30,7 +30,7 @@ jobs:
 
       - name: Push Frontend Image
         run: |
-          docker push $${{ secrets.DOCKER_USERNAME }}/frontend:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/frontend:latest
         # All the below steps are performed in DockerFile of the specific folder
         # # Backend Setup
         # - name: Install Backend Dependencies
