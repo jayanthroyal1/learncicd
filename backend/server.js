@@ -3,10 +3,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { readTodo, writeTodo } from "./src/todo.controller.js";
 import { v4 as uuidv4 } from "uuid";
-import { fileURLToPath } from "url";
-import path from "path";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// import { fileURLToPath } from "url";
+// import path from "path";
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
@@ -17,7 +17,7 @@ const Port = 5000;
 app.use(cors());
 app.use(express.json());
 
-const distPath = path.join(__dirname, "../frontend/dist");
+// const distPath = path.join(__dirname, "../frontend/dist");
 
 app.get("/api/health", (req, res) => {
   res.status(200).json({ message: "Server Healthy" });
@@ -49,11 +49,11 @@ app.post("/api/todos", async (req, res) => {
   res.status(201).json(newTodo);
 });
 
-app.use(express.static(distPath));
+// app.use(express.static(distPath));
 
-app.use((req, res) => {
-  res.sendFile(path.join(distPath, "index.html"));
-});
+// app.use((req, res) => {
+//   res.sendFile(path.join(distPath, "index.html"));
+// });
 
 app.listen(Port, "0.0.0.0", () => {
   console.log("Server running on port", Port);
