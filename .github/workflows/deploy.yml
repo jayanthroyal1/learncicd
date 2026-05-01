@@ -24,6 +24,8 @@ jobs:
                   set -e
 
                   echo "Pull Latest Image..."
+                  docker image rm ${{ secrets.DOCKER_USERNAME }}/backend:latest || true
+                  docker image rm ${{ secrets.DOCKER_USERNAME }}/frontend:latest || true
                   docker pull ${{ secrets.DOCKER_USERNAME }}/backend:latest
                   docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:latest
 
