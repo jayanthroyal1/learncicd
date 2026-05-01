@@ -39,15 +39,13 @@ jobs:
                   docker rm frontend || true
 
                   echo "Run Backend Container..."
-                  docker run -d \
+                  docker run -d -p 5000:5000 \
                     --name backend \
-                    -p 5000:5000 \
                     ${{ secrets.DOCKER_USERNAME }}/backend:$IMAGE_TAG
 
                   echo "Run Frontend Contianer"
-                  docker run -d \
+                  docker run -d -p 80:80 \
                      --name frontend \
-                     -p 80:80 \
                      ${{ secrets.DOCKER_USERNAME }}/frontend:$IMAGE_TAG
 
                   echo "Saving Deployed Verisom..."
