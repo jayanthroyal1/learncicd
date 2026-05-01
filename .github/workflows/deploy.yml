@@ -17,36 +17,28 @@ jobs:
                   echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
                   chmod 600 ~/.ssh/id_rsa
                   ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-
             - name: Deploy to EC2 (Docker Compose)
               run: |+
                   ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
                   set -e
 
                   IMAGE_TAG=${{ github.event.workflow_run.head_sha }}
+                  DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
 
                   echo "Deploying version: \$IMAGE_TAG"
 
+                  cd project/learncicd
+
                   echo "Pull Latest Image..."
 
-                  docker pull ${{ secrets.DOCKER_USERNAME }}/backend:$IMAGE_TAG
-                  docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:$IMAGE_TAG
+                  docker pull $DOCKER_USERNAME/backend:$IMAGE_TAG
+                  docker pull $DOCKER_USERNAME/frontend:$IMAGE_TAG
 
-                  echo "Stop Old Containers..."
-                  docker stop backend || true
-                  docker rm backend || true
-                  docker stop frontend || true
-                  docker rm frontend || true
+                  echo "Stopping old contianers..."
+                  docker compose down || true
 
-                  echo "Run Backend Container..."
-                  docker run -d -p 5000:5000 \
-                    --name backend \
-                    ${{ secrets.DOCKER_USERNAME }}/backend:$IMAGE_TAG
-
-                  echo "Run Frontend Contianer"
-                  docker run -d -p 80:80 \
-                     --name frontend \
-                     ${{ secrets.DOCKER_USERNAME }}/frontend:$IMAGE_TAG
+                  echo "Starting new containers..."
+                  DOCKER_USERNAME=$DOCKER_USERNAME IMAGE_TAG=$IMAGE_TAG docker compose up -d --build
 
                   echo "Saving Deployed Verisom..."
                   echo $IMAGE_TAG > ~/current_version.txt
@@ -59,6 +51,55 @@ jobs:
 
                   echo "Deployment Successfull!"
                   EOF
+
+
+
+              # - name: Deploy to EC2 (Docker Compose)
+              #   run: |+
+              #       ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+              #       set -e
+
+              #       IMAGE_TAG=${{ github.event.workflow_run.head_sha }}
+
+              #       echo "Deploying version: \$IMAGE_TAG"
+
+              #       cd project/learncicd
+
+              #       echo "Pull Latest Image..."
+
+              #       docker pull ${{ secrets.DOCKER_USERNAME }}/backend:$IMAGE_TAG
+              #       docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:$IMAGE_TAG
+
+              #       echo "Stopping old contianers..."
+              #       docker compose down || true
+
+              #       echo "Stop Old Containers..."
+              #       docker stop backend || true
+              #       docker rm backend || true
+              #       docker stop frontend || true
+              #       docker rm frontend || true
+
+              #       echo "Run Backend Container..."
+              #       docker run -d -p 5000:5000 \
+              #         --name backend \
+              #         ${{ secrets.DOCKER_USERNAME }}/backend:$IMAGE_TAG
+
+              #       echo "Run Frontend Contianer"
+              #       docker run -d -p 80:80 \
+              #          --name frontend \
+              #          ${{ secrets.DOCKER_USERNAME }}/frontend:$IMAGE_TAG
+
+              #       echo "Saving Deployed Verisom..."
+              #       echo $IMAGE_TAG > ~/current_version.txt
+
+              #       echo "Running Cointainers..."
+              #       docker ps
+
+              #       echo "Cleaning usused Images..."
+              #       docker image prune -f
+
+              #       echo "Deployment Successfull!"
+              #       EOF
 
               #   The below step are used before docker hub 
               #   echo "Moving to project directory..."
