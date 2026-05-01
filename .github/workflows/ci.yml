@@ -26,7 +26,7 @@ jobs:
 
       - name: Build Frontend Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend::${{ github.sha }} ./frontend
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:${{ github.sha }} ./frontend
 
       - name: Push Frontend Image
         run: |
